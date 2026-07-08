@@ -12,11 +12,15 @@ pool:
 steps:
 - checkout: self
 
-- script: |
-    echo "Current Directory:"
-    pwd
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.13'
 
-    echo ""
-    echo "Repository Files:"
-    ls -la
-  displayName: "Checkout Verification"
+- script: |
+    python -m pip install --upgrade pip
+    python -m pip install -r requirements.txt
+  displayName: Install Dependencies
+
+- script: |
+    python -m pytest -v
+  displayName: Run Tests
