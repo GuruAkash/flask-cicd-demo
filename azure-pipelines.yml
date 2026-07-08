@@ -31,7 +31,8 @@ stages:
       displayName: Install Dependencies
 
     - script: |
-        pytest
+        export PYTHONPATH=$(System.DefaultWorkingDirectory)
+        python -m pytest -v
       displayName: Run Unit Tests
 
     - task: Docker@2
