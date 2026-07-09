@@ -9,10 +9,9 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  pythonVersion: '3.13'
-  dockerRepository: 'gurudocker20/flask-cicd-demo'
-  dockerRegistry: 'dockerhub-connection'
-
+- group: 'DevOps-Common'
+- name: pythonVersion
+  value: '3.13'
 
 stages:
 - stage: Build
