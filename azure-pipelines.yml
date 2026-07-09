@@ -8,6 +8,12 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
+variables:
+  pythonVersion: '3.13'
+  dockerRepository: 'gurudocker20/flask-cicd-demo'
+  dockerRegistry: 'dockerhub-connection'
+
+
 stages:
 - stage: Build
   displayName: Build and Publish Docker Image
@@ -22,7 +28,7 @@ stages:
     - task: UsePythonVersion@0
       displayName: Use Python 3.13
       inputs:
-        versionSpec: '3.13'
+        versionSpec: '$(pythonVersion)'
 
     - script: |
         python -m pip install --upgrade pip
@@ -38,8 +44,8 @@ stages:
     - task: Docker@2
       displayName: Build and Push Docker Image
       inputs:
-        containerRegistry: 'dockerhub-connection'
-        repository: 'gurudocker20/flask-cicd-demo'
+        containerRegistry: '$(dockerRegistry)'
+        repository: '$(dockerRepository)'
         command: 'buildAndPush'
         Dockerfile: 'Dockerfile'
         tags: |
