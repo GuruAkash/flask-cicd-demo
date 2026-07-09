@@ -45,3 +45,13 @@ stages:
         tags: |
           $(Build.BuildId)
           latest
+    
+    - script: |
+        echo "Build ID               : $(Build.BuildId)"
+        echo "Build Number           : $(Build.BuildNumber)"
+        echo "Repository             : $(Build.Repository.Name)"
+        echo "Branch                 : $(Build.SourceBranch)"
+        echo "Commit                 : $(Build.SourceVersion)"
+        echo "Working Directory      : $(System.DefaultWorkingDirectory)"
+        echo "Operating System       : $(Agent.OS)"
+      displayName: Print Pipeline Variables
