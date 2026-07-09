@@ -60,3 +60,4 @@ stages:
         echo "Working Directory      : $(System.DefaultWorkingDirectory)"
         echo "Operating System       : $(Agent.OS)"
       displayName: Print Pipeline Variables
+      
