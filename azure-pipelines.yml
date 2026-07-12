@@ -60,3 +60,25 @@ stages:
         echo "Working Directory      : $(System.DefaultWorkingDirectory)"
         echo "Operating System       : $(Agent.OS)"
       displayName: Print Pipeline Variables
+- stage: Deploy
+  displayName: Deploy to Azure
+
+  dependsOn: Build
+
+  jobs:
+
+  - job: VerifyAzure
+
+    steps:
+
+    - task: AzureCLI@2
+      displayName: Verify Azure Connection
+
+      inputs:
+        azureSubscription: 'Azure-freetrial-connection'
+        scriptType: bash
+        scriptLocation: inlineScript
+
+        inlineScript: |
+          echo "Checking Azure Connection..."
+          az account show
