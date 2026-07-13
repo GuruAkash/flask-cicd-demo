@@ -62,32 +62,35 @@ stages:
       displayName: Print Pipeline Variables
 
 - stage: Deploy
-  displayName: Deploy to Azure
-
+  displayName: Deploy to AKS
   dependsOn: Build
 
   jobs:
 
-  - job: VerifyAzure
+  - deployment: DeployToAKS
 
-    steps:
+    displayName: Deploy Flask Application
 
-    - task: AzureCLI@2
-      displayName: Verify Azure Connection
+    environment: aks-prod
 
-      inputs:
-        azureSubscription: 'Azure-freetrial-connection'
-        scriptType: bash
-        scriptLocation: inlineScript
+    strategy:
+      runOnce:
+        deploy:
 
-        inlineScript: |
-          az container create \
-            --resource-group rg-flask-demo \
-            --name flask-cicd-demo \
-            --image gurudocker20/flask-cicd-demo:latest \
-            --dns-name-label flaskdemo-guru \
-            --ports 5000 \
-            --os-type Linux \
-            --cpu 1 \
-            --memory 1.5 \
-            --restart-policy Always
+          steps:
+
+          - task: KubernetesManifest@1
+            displayName: Deploy to AKS
+
+            inputs:
+
+              action: deploy
+
+              kubernetesServiceConnection: AKS-ServiceConnection
+
+              manifests: |
+                k8s/deployment.yaml
+                k8s/service.yaml
+
+              containers: |
+                gurudocker20/flask-cicd-demo:$(imageTag)
