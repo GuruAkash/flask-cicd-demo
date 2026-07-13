@@ -68,7 +68,6 @@ stages:
   jobs:
 
   - deployment: DeployToAKS
-
     displayName: Deploy Flask Application
 
     environment: aks-prod
@@ -79,13 +78,13 @@ stages:
 
           steps:
 
+          - checkout: self
+
           - task: KubernetesManifest@1
             displayName: Deploy to AKS
 
             inputs:
-
               action: deploy
-
               kubernetesServiceConnection: aks-service-connection
 
               manifests: |
@@ -93,5 +92,5 @@ stages:
                 k8s/service.yaml
 
               containers: |
-                gurudocker20/flask-cicd-demo:$(imageTag)
+                gurudocker20/flask-cicd-demo:$(Build.BuildId)
 
