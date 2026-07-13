@@ -60,7 +60,7 @@ stages:
         echo "Working Directory      : $(System.DefaultWorkingDirectory)"
         echo "Operating System       : $(Agent.OS)"
       displayName: Print Pipeline Variables
-      
+
 - stage: Deploy
   displayName: Deploy to Azure
 
@@ -81,5 +81,13 @@ stages:
         scriptLocation: inlineScript
 
         inlineScript: |
-          echo "Checking Azure Connection..."
-          az account show
+          az container create \
+            --resource-group rg-flask-demo \
+            --name flask-cicd-demo \
+            --image gurudocker20/flask-cicd-demo:latest \
+            --dns-name-label flaskdemo-guru \
+            --ports 5000 \
+            --os-type Linux \
+            --cpu 1 \
+            --memory 1.5 \
+            --restart-policy Always
