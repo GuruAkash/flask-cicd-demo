@@ -94,3 +94,4 @@ stages:
 
               containers: |
                 gurudocker20/flask-cicd-demo:$(imageTag)
+
