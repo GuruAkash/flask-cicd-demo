@@ -86,7 +86,7 @@ stages:
 
               action: deploy
 
-              kubernetesServiceConnection: AKS-ServiceConnection
+              kubernetesServiceConnection: aks-service-connection
 
               manifests: |
                 k8s/deployment.yaml
