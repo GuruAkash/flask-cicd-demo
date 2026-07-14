@@ -21,5 +21,24 @@ spec:
       - name: flask-container
         image: gurudocker20/flask-cicd-demo:latest
 
+        env:
+        - name: APP_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: flask-config
+              key: APP_NAME
+
+        - name: ENVIRONMENT
+          valueFrom:
+            configMapKeyRef:
+              name: flask-config
+              key: ENVIRONMENT
+
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: flask-secret
+              key: DB_PASSWORD
+
         ports:
         - containerPort: 5000
