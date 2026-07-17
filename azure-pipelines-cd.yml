@@ -35,7 +35,7 @@ stages:
 
               inputs:
                 action: deploy
-                kubernetesServiceConnection: aks-service-connection
+                kubernetesServiceConnection: aks-dev-connection
 
                 namespace: aks-dev
 
