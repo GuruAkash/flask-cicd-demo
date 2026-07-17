@@ -6,9 +6,12 @@ metadata:
 
 spec:
   ingressClassName: nginx
+
   rules:
-  - http:
+  - host: dev.flaskdemo.local
+    http:
       paths:
+
       - path: /home
         pathType: Prefix
         backend:
