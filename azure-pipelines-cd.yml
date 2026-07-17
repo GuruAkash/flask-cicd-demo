@@ -28,4 +28,21 @@ stages:
         deploy:
 
           steps:
-          - checkout: self
+            - checkout: self
+
+            - task: KubernetesManifest@1
+              displayName: Deploy to AKS Dev
+
+              inputs:
+                action: deploy
+                kubernetesServiceConnection: aks-service-connection
+
+                namespace: aks-dev
+
+                manifests: |
+                  k8s/deployment.yaml
+                  k8s/service.yaml
+                  k8s/ingress.yaml
+
+                containers: |
+                  gurudocker20/flask-cicd-demo:${{ parameters.imageTag }}
