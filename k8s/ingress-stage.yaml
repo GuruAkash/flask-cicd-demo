@@ -19,11 +19,3 @@ spec:
             name: flask-service
             port:
               number: 80
-
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: nginx-demo
-            port:
-              number: 80
