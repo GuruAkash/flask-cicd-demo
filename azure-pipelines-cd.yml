@@ -83,3 +83,41 @@ stages:
 
                   containers: |
                     gurudocker20/flask-cicd-demo:${{ parameters.imageTag }}                 
+
+- stage: Deploy_Prod
+  displayName: Deploy to Prod
+  dependsOn: Deploy_Stage
+  condition: succeeded()
+
+  jobs:
+  - deployment: DeployProd
+
+    displayName: Deploy to AKS Prod
+
+    environment: aks-prod
+
+    strategy:
+      runOnce:
+        deploy:
+
+          steps:
+            - checkout: self
+
+            - task: KubernetesManifest@1
+              displayName: Deploy to AKS Prod
+
+              inputs:
+                action: deploy
+                kubernetesServiceConnection: aks-prod-connection
+
+                namespace: aks-prod
+
+                manifests: |
+                  k8s/deployment.yaml
+                  k8s/service.yaml
+                  k8s/ingress-prod.yaml
+                  k8s/secret.yaml
+                  k8s/configmap.yaml
+                containers: |
+                  gurudocker20/flask-cicd-demo:${{ parameters.imageTag }}
+                  
