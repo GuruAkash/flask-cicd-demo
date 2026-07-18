@@ -42,7 +42,7 @@ stages:
                 manifests: |
                   k8s/deployment.yaml
                   k8s/service.yaml
-                  k8s/ingress.yaml
+                  k8s/ingress-dev.yaml
                   k8s/secret.yaml
                   k8s/configmap.yaml
                 containers: |
@@ -77,7 +77,7 @@ stages:
                   manifests: |
                     k8s/deployment.yaml
                     k8s/service.yaml
-                    k8s/ingress.yaml
+                    k8s/ingress-stage.yaml
                     k8s/secret.yaml
                     k8s/configmap.yaml
 
