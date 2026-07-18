@@ -47,3 +47,39 @@ stages:
                   k8s/configmap.yaml
                 containers: |
                   gurudocker20/flask-cicd-demo:${{ parameters.imageTag }}
+                  
+- stage: Deploy_Stage
+  displayName: Deploy to Stage
+  dependsOn: Deploy_Dev
+  condition: succeeded()
+
+  jobs:
+  - deployment: DeployStage
+    displayName: Deploy to AKS Stage
+    environment: aks-stage
+
+    strategy:
+        runOnce:
+          deploy:
+
+            steps:
+              - checkout: self
+
+              - task: KubernetesManifest@1
+                displayName: Deploy to AKS Stage
+
+                inputs:
+                  action: deploy
+                  kubernetesServiceConnection: aks-stage-connection
+
+                  namespace: aks-stage
+
+                  manifests: |
+                    k8s/deployment.yaml
+                    k8s/service.yaml
+                    k8s/ingress.yaml
+                    k8s/secret.yaml
+                    k8s/configmap.yaml
+
+                  containers: |
+                    gurudocker20/flask-cicd-demo:${{ parameters.imageTag }}                 
