@@ -13,41 +13,53 @@ parameters:
   default: latest
 
 stages:
+
+# ============================
+# DEV
+# ============================
 - stage: Deploy_Dev
   displayName: Deploy to Dev
 
   jobs:
   - deployment: DeployDev
-
     displayName: Deploy to AKS Dev
-
     environment: aks-dev
 
     strategy:
       runOnce:
         deploy:
-
           steps:
-            - checkout: self
 
-            - task: KubernetesManifest@1
-              displayName: Deploy to AKS Dev
+          - checkout: self
 
-              inputs:
-                action: deploy
-                kubernetesServiceConnection: aks-dev-connection
+          - task: HelmInstaller@1
+            displayName: Install Helm
+            inputs:
+              helmVersionToInstall: latest
 
-                namespace: aks-dev
+          - task: Kubernetes@1
+            displayName: Login to AKS Dev
+            inputs:
+              connectionType: Kubernetes Service Connection
+              kubernetesServiceEndpoint: aks-dev-connection
+              command: login
 
-                manifests: |
-                  k8s/deployment.yaml
-                  k8s/service.yaml
-                  k8s/ingress-dev.yaml
-                  k8s/secret.yaml
-                  k8s/configmap.yaml
-                containers: |
-                  gurudocker20/flask-cicd-demo:${{ parameters.imageTag }}
-                  
+          - script: |
+              helm upgrade --install flask-app ./flask-chart \
+                --namespace aks-dev \
+                --create-namespace \
+                -f ./flask-chart/values-dev.yaml \
+                --set image.tag=${{ parameters.imageTag }}
+            displayName: Deploy with Helm
+
+          - script: |
+              kubectl rollout status deployment/flask-app -n aks-dev
+            displayName: Verify Deployment
+
+
+# ============================
+# STAGE
+# ============================
 - stage: Deploy_Stage
   displayName: Deploy to Stage
   dependsOn: Deploy_Dev
@@ -59,31 +71,40 @@ stages:
     environment: aks-stage
 
     strategy:
-        runOnce:
-          deploy:
+      runOnce:
+        deploy:
+          steps:
 
-            steps:
-              - checkout: self
+          - checkout: self
 
-              - task: KubernetesManifest@1
-                displayName: Deploy to AKS Stage
+          - task: HelmInstaller@1
+            displayName: Install Helm
+            inputs:
+              helmVersionToInstall: latest
 
-                inputs:
-                  action: deploy
-                  kubernetesServiceConnection: aks-stage-connection
+          - task: Kubernetes@1
+            displayName: Login to AKS Stage
+            inputs:
+              connectionType: Kubernetes Service Connection
+              kubernetesServiceEndpoint: aks-stage-connection
+              command: login
 
-                  namespace: aks-stage
+          - script: |
+              helm upgrade --install flask-app ./flask-chart \
+                --namespace aks-stage \
+                --create-namespace \
+                -f ./flask-chart/values-stage.yaml \
+                --set image.tag=${{ parameters.imageTag }}
+            displayName: Deploy with Helm
 
-                  manifests: |
-                    k8s/deployment.yaml
-                    k8s/service.yaml
-                    k8s/ingress-stage.yaml
-                    k8s/secret.yaml
-                    k8s/configmap.yaml
+          - script: |
+              kubectl rollout status deployment/flask-app -n aks-stage
+            displayName: Verify Deployment
 
-                  containers: |
-                    gurudocker20/flask-cicd-demo:${{ parameters.imageTag }}                 
 
+# ============================
+# PROD
+# ============================
 - stage: Deploy_Prod
   displayName: Deploy to Prod
   dependsOn: Deploy_Stage
@@ -91,33 +112,36 @@ stages:
 
   jobs:
   - deployment: DeployProd
-
     displayName: Deploy to AKS Prod
-
     environment: aks-prod
 
     strategy:
       runOnce:
         deploy:
-
           steps:
-            - checkout: self
 
-            - task: KubernetesManifest@1
-              displayName: Deploy to AKS Prod
+          - checkout: self
 
-              inputs:
-                action: deploy
-                kubernetesServiceConnection: aks-prod-connection
+          - task: HelmInstaller@1
+            displayName: Install Helm
+            inputs:
+              helmVersionToInstall: latest
 
-                namespace: aks-prod
+          - task: Kubernetes@1
+            displayName: Login to AKS Prod
+            inputs:
+              connectionType: Kubernetes Service Connection
+              kubernetesServiceEndpoint: aks-prod-connection
+              command: login
 
-                manifests: |
-                  k8s/deployment.yaml
-                  k8s/service.yaml
-                  k8s/ingress-prod.yaml
-                  k8s/secret.yaml
-                  k8s/configmap.yaml
-                containers: |
-                  gurudocker20/flask-cicd-demo:${{ parameters.imageTag }}
-                  
+          - script: |
+              helm upgrade --install flask-app ./flask-chart \
+                --namespace aks-prod \
+                --create-namespace \
+                -f ./flask-chart/values-prod.yaml \
+                --set image.tag=${{ parameters.imageTag }}
+            displayName: Deploy with Helm
+
+          - script: |
+              kubectl rollout status deployment/flask-app -n aks-prod
+            displayName: Verify Deployment

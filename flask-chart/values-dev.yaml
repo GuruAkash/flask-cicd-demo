@@ -1,0 +1,12 @@
+replicaCount: 3
+
+ingress:
+  host: dev.flaskdemo.local
+
+config:
+  appName: Flask Demo
+  logLevel: INFO
+  environment: DEV
+
+secret:
+  dbPassword: admin123

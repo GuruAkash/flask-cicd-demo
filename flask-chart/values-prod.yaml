@@ -1,0 +1,15 @@
+replicaCount: 5
+
+image:
+  tag: latest
+
+ingress:
+  host: prod.flaskdemo.local
+
+config:
+  appName: Flask Demo
+  logLevel: INFO
+  environment: PROD
+
+secret:
+  dbPassword: admin123

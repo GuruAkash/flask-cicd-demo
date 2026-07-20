@@ -1,0 +1,15 @@
+replicaCount: 3
+
+image:
+  tag: latest
+
+ingress:
+  host: stage.flaskdemo.local
+
+config:
+  appName: Flask Demo
+  logLevel: INFO
+  environment: STAGE
+
+secret:
+  dbPassword: admin123

@@ -1,0 +1,34 @@
+replicaCount: 2
+
+image:
+  repository: gurudocker20/flask-cicd-demo
+  tag: latest
+  pullPolicy: Always
+
+container:
+  port: 5000
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 5000
+
+ingress:
+  enabled: true
+  host: dev.flaskdemo.local
+
+config:
+  appName: Flask Demo
+  logLevel: INFO
+  environment: DEV
+
+secret:
+  dbPassword: admin123
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 250m
+    memory: 256Mi
